@@ -242,19 +242,19 @@ void main()
 			}
 			if (motor_level[2] || (motor_buf&0x02))
 			{
-				motor_emit(MOTOR_MOVEL, motor_level[2]);
+				motor_emit(MOTOR_AIRa, motor_level[2]);
 				motor_buf = motor_buf & (!0x02);
 				motor_buf = motor_buf | ((motor_level[2]) ? 0x02 : 0x00);
 			}
 			if (motor_level[3] || (motor_buf&0x04))
 			{
-				motor_emit(MOTOR_MOVEL, motor_level[3]);
+				motor_emit(MOTOR_AIRb, motor_level[3]);
 				motor_buf = motor_buf & (!0x04);
 				motor_buf = motor_buf | ((motor_level[3]) ? 0x04 : 0x00);
 			}
 			if (motor_level[4] || (motor_buf&0x08))
 			{
-				motor_emit(MOTOR_MOVEL, motor_level[4]);
+				motor_emit(MOTOR_AIRc, motor_level[4]);
 				motor_buf = motor_buf & (!0x08);
 				motor_buf = motor_buf | ((motor_level[4]) ? 0x08 : 0x00);
 			}

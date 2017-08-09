@@ -7,7 +7,7 @@
 /*	Program
  *	コンパイル制御による制御プログラムの選択
  */
-#define Program
+#define Program 1
 
 /*	MOTOR_MOVER
  */
@@ -71,11 +71,10 @@
 /*	LED_OPR
  *	オペレーションLEDのピン設定
  */
-#define LED_OPR	PIN_A0
+#define LED_OPR	PIN_C5
 /*	LED_F1
  *	LED1のピン設定
  */
-#define LED_F1	PIN_A2
-
+#define LED_F1	PIN_C1
 #endif
 /* defines.h EOF */
