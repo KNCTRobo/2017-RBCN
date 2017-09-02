@@ -5,7 +5,7 @@
 #include <16F886.h>
 #include "defines.h"
 
-#fuses INTRC_IO,NOWDT,NOPROTECT,PUT,NOMCLR,NOLVP,BROWNOUT
+#fuses INTRC_IO,WDT,NOPROTECT,PUT,NOMCLR,NOLVP,BROWNOUT
 #use delay(CLOCK=8000000)
 #use fast_io(a)//先に宣言する。
 #use fast_io(b)
@@ -221,7 +221,7 @@ void main()
 		motor_level[1] = pwt[level[1]];
 
 		/* LED点灯制御 */
-		if (LED_PULLUP)
+		if (LED_PULLUP == 0)
 		{
 			if (f)
 				output_high(LED_OPR);
@@ -307,7 +307,7 @@ void led_flash(void)
 {
 	output_high(LED_OPR);
 	int i;
-	for(i= 5; i; i--)
+	for(i = 5; i; i--)
 	{
 		output_high(LED_F1);
 		delay_ms(F_TIME);
