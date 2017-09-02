@@ -1,6 +1,6 @@
 /*	Program.c
  *	2017年度高専ロボコン Aチームメインプログラム
- *	version	0.83
+ *	version	0.90
  */
 #include <16F886.h>
 #include "defines.h"
