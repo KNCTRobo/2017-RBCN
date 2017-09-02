@@ -1,6 +1,6 @@
 /*	Program.c
  *	2017年度高専ロボコン Aチームメインプログラム
- *	version	0.80
+ *	version	0.83
  */
 #include <16F886.h>
 #include "defines.h"
@@ -221,14 +221,28 @@ void main()
 		motor_level[1] = pwt[level[1]];
 
 		/* LED点灯制御 */
-		if (f)
-			output_high(LED_OPR);
+		if (LED_PULLUP)
+		{
+			if (f)
+				output_high(LED_OPR);
+			else
+				output_low(LED_OPR);
+			if (EMITRULE_LED_F1)
+				output_high(LED_F1);
+			else
+				output_low(LED_F1);
+		}
 		else
-			output_low(LED_OPR);
-		if (EMITRULE_LED_F1 ^ LED_PULLUP)
-			output_high(LED_F1);
-		else
-			output_low(LED_F1);
+		{
+			if (f)
+				output_low(LED_OPR);
+			else
+				output_high(LED_OPR);
+			if (EMITRULE_LED_F1)
+				output_low(LED_F1);
+			else
+				output_high(LED_F1);
+		}
 
 		/* モータードライバの出力内容を決定、信号を出力する */
 		if (rcv && PS2_PUSH_R1)
@@ -302,6 +316,7 @@ void led_flash(void)
 	}
 }
 
+#if 0
 /*/Analogs gen_Analog(int source[], int offset)
 	//アナログスティックの計算
 	Analogs の中身
@@ -395,9 +410,11 @@ Analogs gen_Analog(unsigned char source[], int offset)
 	}
 	return data;
 }
+#endif
 
 void PS2_dataread(unsigned char source[])
 {
+	int i;
 		for (i = 0; i < BUFFER_SIZE; i++)
 			Data[i] = 0;
 		/* PSコントローラからデータ受信 */
