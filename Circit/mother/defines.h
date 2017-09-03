@@ -1,80 +1,94 @@
 /*	defines.h
- *	2017е№ґеє¦й«е°‚гѓ­гѓњг‚ігѓі й‡§и·Їй«е°‚AгѓЃгѓјгѓ  е®љзѕ©й еџџ
+ *	2017”N“xЌ‚ђкѓЌѓ{ѓRѓ“ ‹ъHЌ‚ђкAѓ`Ѓ[ѓЂ ’и‹`—М€ж
  */
 #ifndef _predefine_
 #define _predefine_
 
-/*	Program
- *	г‚ігѓігѓ‘г‚¤гѓ«е€¶еѕЎгЃ«г‚€г‚‹е€¶еѕЎгѓ—гѓ­г‚°гѓ©гѓ гЃ®йЃёжЉћ
- */
-#define Program 1
+#include <16F886.h>
 
-/*	MOTOR_MOVER
- */
+#fuses INTRC_IO,NOWDT,NOPROTECT,PUT,NOMCLR,NOLVP,BROWNOUT
+#use delay(CLOCK=8000000)
+#use fast_io(a)//ђж‚ЙђйЊѕ‚·‚йЃB
+#use fast_io(b)
+#use fast_io(c)
+#use fast_io(e)
+/*	RS232(USART)ѓ‚ѓWѓ…Ѓ[ѓ‹Ћg—p
+ *	‘¬“x			9600Hz
+ *	ЋуђMѓsѓ“		C7
+ *	‘—ђMѓsѓ“		C6
+ *	ѓGѓ‰Ѓ[‹L^	—LЊш
+ */	#use RS232(BAUD=9600,RCV=PIN_C7,XMIT=PIN_C6,ERRORS,FORCE_SW)
+#byte port_a = 5
+#byte port_b = 6
+#byte port_c = 7
+#byte port_e = 9
+#byte INTCON = 0x0B
+
+/*	Program
+ *	ѓRѓ“ѓpѓCѓ‹ђ§Њд‚Й‚ж‚йђ§ЊдѓvѓЌѓOѓ‰ѓЂ‚М‘I‘р
+ */	#define Program	0
+
+#if Program == 0
+#define PWR_MOV_TABLE	{0}
+#endif
+#if Program == 1
+#define MOTOR_NUM	5
+#define MOTOR_MOVER 'R'
+#define MOTOR_MOVEL 'L'
+#define MOTOR_AIRa 'A'
+#define MOTOR_AIRb 'B'
+#define MOTOR_ARM 'C'
+/*	PWR_MOV_TABLE
+ *	€Ъ“®‚Й—p‚ў‚йѓpѓЏЃ[
+ */	#define PWR_MOV_TABLE	{-100, -30, 0, 30, 100}
+/*	PWR_AIR
+ *	ѓGѓAѓVѓЉѓ“ѓ_‹м“®‚Й—p‚ў‚йѓpѓЏЃ[
+ */	#define PWR_AIR	100
+/*	PWR_ARM
+ *	ѓAЃ[ѓЂ‹м“®‚Й—p‚ў‚йѓpѓЏЃ[
+ */	#define PWR_ARM	100
+#endif
+#if Program == 2
+#define MOTOR_NUM	6
 #define MOTOR_MOVER	'R'
-/*	MOTOR_MOVEL
- */
 #define MOTOR_MOVEL	'L'
-/*	MOTOR_AIRa
- */
-#define MOTOR_AIRa	'A'
-/*	MOTOR_AIRb
- */
-#define MOTOR_AIRb	'B'
-/*	MOTOR_AIRc
- */
-#define MOTOR_AIRc	'C'
+#endif
 
 /*	LOOP_DELAY
- *	гѓ—гѓ­г‚°гѓ©гѓ гѓ«гѓјгѓ—гЃ®еѕ…гЃЎж™‚й–“
- */
-#define LOOP_DELAY 1000
+ *	ѓvѓЌѓOѓ‰ѓЂѓ‹Ѓ[ѓv‚М‘Т‚їЋћЉФ
+ */	#define LOOP_DELAY	0
+/*	LOOP_DELAYUNIT_US
+ *	ѓvѓЌѓOѓ‰ѓЂѓ‹Ѓ[ѓv‚М‘Т‚їЋћЉФ‚М’P€К‚рus‚Й‚·‚й‚©‚З‚¤‚©
+ */	#define LOOP_DELAYUNIT_US	1
 /*	TIME_MOTOR_MARGIN
- *	гѓўгѓјг‚їгѓјгѓ‰гѓ©г‚¤гѓђгЃ«дїЎеЏ·г‚’йЂЃдїЎгЃ—гЃџз›ґеѕЊгЃ®еѕ…гЃЎж™‚й–“
- */
-#define TIME_MOTOR_MARGIN 6100
+ *	ѓ‚Ѓ[ѓ^Ѓ[ѓhѓ‰ѓCѓo‚ЙђMЌ†‚р‘—ђM‚µ‚Ѕ’јЊг‚М‘Т‚їЋћЉФ
+ */	#define TIME_MOTOR_MARGIN	6100
 /*	F_TIME
- *	LEDи©¦йЁ“з‚№зЃЇгЃ®LEDз‚№зЃЇж™‚й–“
- */
-#define F_TIME 200
+ *	LEDЋЋЊ±“_“”‚МLED“_“”ЋћЉФ
+ */	#define F_TIME	200
 
-/*	PWR_MOV
- *	гѓ­гѓњгѓѓгѓ€1з”Ёз§»е‹•гЃ«з”ЁгЃ„г‚‹гѓ‘гѓЇгѓј
- */
-#define PWR_MOV		100
-/*	PWR_MOV_H
- *	гѓ­гѓњгѓѓгѓ€2з”Ёз§»е‹•гЃ«з”ЁгЃ„г‚‹гѓ‘гѓЇгѓј
- */
-#define PWR_MOV_H	100
-/*	PWR_MOV_L
- *	гѓ­гѓњгѓѓгѓ€2з”Ёз§»е‹•гЃ«з”ЁгЃ„г‚‹гѓ‘гѓЇгѓј
- */
-#define PWR_MOV_L	 30
-/*	PWR_AIR
- *	г‚Ёг‚ўг‚·гѓЄгѓігѓЂй§†е‹•гЃ«з”ЁгЃ„г‚‹гѓ‘гѓЇгѓј
- */
-#define PWR_AIR 100
-
+/*	DATA_BUFFER_SIZE
+ *	ЋуђMѓfЃ[ѓ^‚Мѓoѓbѓtѓ@ѓTѓCѓY
+ */	#define PS2_DATA_BUFFER_SIZE		  32
 /*	RCV_THRESHOLD
- *	PS2гЃ®дїЎеЏ·гЃЊйЂ”зµ¶гЃ€гЃџйљ›гЃ«йЂљдїЎж–­зµ¶зЉ¶ж…‹гЃЁе€¤е®љгЃ™г‚‹гЃџг‚ЃгЃ®й–ѕеЂ¤
- */
-#define RCV_THRESHOLD 3
+ *	PS2‚МђMЌ†‚Є“rђв‚¦‚ЅЌЫ‚Й’КђM’fђвЏу‘Ф‚Ж”»’и‚·‚й‚Ѕ‚Я‚Ми‡’l
+ */	#define RCV_THRESHOLD		   3
 
-/*	EMITRULE_LED_F1
- *	LED1гЃ®з‚№зЃЇжќЎд»¶
- */
-#define EMITRULE_LED_F1 (((rcv) && (!PS2_PUSH_R1)) || (motor_buf))
+#define ANALOG_ENABLE	0
+#define ANALOG_THRESHOLD	80
+
 /*	LED_PULLUP
- *	LED1гЃ®гѓ—гѓ«г‚ўгѓѓгѓ—дЅїз”Ёгѓ•гѓ©г‚°
- */
-#define LED_PULLUP 0
+ *	LED1‚Мѓvѓ‹ѓAѓbѓvЋg—pѓtѓ‰ѓO
+ */	#define LED_PULLUP			   1
 /*	LED_OPR
- *	г‚Єгѓљгѓ¬гѓјг‚·гѓ§гѓіLEDгЃ®гѓ”гѓіиЁ­е®љ
- */
-#define LED_OPR	PIN_C5
+ *	ѓIѓyѓЊЃ[ѓVѓ‡ѓ“LED‚Мѓsѓ“ђЭ’и
+ */	#define LED_OPR				PIN_A0
 /*	LED_F1
- *	LED1гЃ®гѓ”гѓіиЁ­е®љ
- */
-#define LED_F1	PIN_C1
+ *	LED1‚Мѓsѓ“ђЭ’и
+ */	#define LED_F1				PIN_A2
+/*	EMITRULE_LED_F1
+ *	LED1‚М“_“”ЏрЊЏ
+ */	#define EMITRULE_LED_F1		(rcv)
+
 #endif
 /* defines.h EOF */
