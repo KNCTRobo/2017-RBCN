@@ -26,7 +26,7 @@
 
 /*	Program
  *	コンパイル制御による制御プログラムの選択
- */	#define Program	0
+ */	#define Program	1
 
 #if Program == 0
 #define PWR_MOV_TABLE	{0}
@@ -88,7 +88,7 @@
  */	#define LED_F1				PIN_A2
 /*	EMITRULE_LED_F1
  *	LED1の点灯条件
- */	#define EMITRULE_LED_F1		(rcv)
+ */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_buf)
 
 #endif
 /* defines.h EOF */

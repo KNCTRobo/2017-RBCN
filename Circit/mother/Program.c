@@ -1,6 +1,6 @@
 /*	Program.c
  *	高専ロボコン2017 Aチームプログラム
- *	ver. 0.50
+ *	ver. 0.92
  */
 
 #include "includes.h"
@@ -103,7 +103,7 @@ void main()
 				}
 				pwr[2] = PS2_PUSH_L2 ? PWR_AIR : 0;
 				pwr[3] = PS2_PUSH_R2 ? PWR_AIR : 0;
-				pwr[4] = (PS2_PUSH_TRI ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
+				pwr[4] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
 				#endif
 				/* ロボット2(風船割ロボ) */
 				#if (Program == 2)
