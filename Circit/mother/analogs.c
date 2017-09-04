@@ -5,9 +5,9 @@
 #if (ANALOG_ENABLE != 0)
 
 /*	Analogs = gen_Analog(int* source, int offset)
-	ƒAƒiƒƒOƒXƒeƒBƒbƒN‚ÌŒvZ
-	@params source Šî‚Æ‚È‚éƒf[ƒ^
-	@params offset ƒf[ƒ^‚ÌƒIƒtƒZƒbƒgî•ñ
+	ã‚¢ãƒŠãƒ­ã‚°ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®è¨ˆç®—
+	@params source åŸºã¨ãªã‚‹ãƒ‡ãƒ¼ã‚¿
+	@params offset ãƒ‡ãƒ¼ã‚¿ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆæƒ…å ±
  */
 Analogs gen_Analog(unsigned char source[],int offset)
 {
@@ -28,36 +28,36 @@ Analogs gen_Analog(unsigned char source[],int offset)
 	data.depth_L.X= 0;
 	data.depth_L.Y= 0;
 
-	//--‰EX-
-	if (StickRX < (0x80 - ANALOG_THRESHOLD)) {	//‰EStick‚ª¶
+	//--å³X-
+	if (StickRX < (0x80 - ANALOG_THRESHOLD)) {	//å³StickãŒå·¦
 		data.sticks += 0x01;
 		data.depth_R.X = 0x7F - StickRX;
-	} else if (StickRX > (0x80 + ANALOG_THRESHOLD)) {	//‰EStick‚ª‰E
+	} else if (StickRX > (0x80 + ANALOG_THRESHOLD)) {	//å³StickãŒå³
 		data.sticks += 0x02;
 		data.depth_R.X = StickRX - 0x80;
 	}
-	//--‰EY-
-	if (StickRY < (0x80 - ANALOG_THRESHOLD)) {	//‰EStick‚ªã
+	//--å³Y-
+	if (StickRY < (0x80 - ANALOG_THRESHOLD)) {	//å³StickãŒä¸Š
 		data.sticks += 0x04;
 		data.depth_R.Y = 0x7F - StickRY;
-	} else if (StickRY > (0x80 + ANALOG_THRESHOLD)) {	//‰EStick‚ª‰º
+	} else if (StickRY > (0x80 + ANALOG_THRESHOLD)) {	//å³StickãŒä¸‹
 		data.sticks += 0x08;
 		data.depth_R.Y = StickRY - 0x80;
 	}
 
-	//--¶X-
-	if (StickLX < (0x80 - ANALOG_THRESHOLD)) {	//¶Stick‚ª¶
+	//--å·¦X-
+	if (StickLX < (0x80 - ANALOG_THRESHOLD)) {	//å·¦StickãŒå·¦
 		data.sticks += 0x10;
 		data.depth_L.X = 0x7F - StickLX;
-	} else if (StickLX > (0x80 + ANALOG_THRESHOLD)) {	//¶Stick‚ª‰E
+	} else if (StickLX > (0x80 + ANALOG_THRESHOLD)) {	//å·¦StickãŒå³
 		data.sticks += 0x20;
 		data.depth_L.X = StickLX - 0x80;
 	}
-	//--¶Y-
-	if (StickLY < (0x80 - ANALOG_THRESHOLD)) {	//¶Stick‚ªã
+	//--å·¦Y-
+	if (StickLY < (0x80 - ANALOG_THRESHOLD)) {	//å·¦StickãŒä¸Š
 		data.sticks += 0x40;
 		data.depth_L.Y = 0x7F - StickLY;
-	} else if (StickLY > (0x80 + ANALOG_THRESHOLD)) {	//¶Stick‚ª‰º
+	} else if (StickLY > (0x80 + ANALOG_THRESHOLD)) {	//å·¦StickãŒä¸‹
 		data.sticks += 0x80;
 		data.depth_L.Y = StickLY - 0x80;
 	}

@@ -1,6 +1,6 @@
 /*	Program.c
  *	高専ロボコン2017 Aチームプログラム
- *	ver. 0.92
+ *	ver. 0.95
  */
 
 #include "includes.h"
@@ -66,10 +66,13 @@ void main()
 	{
 		/* 各変数をリフレッシュ */
 		#if Program != 0
-		for(i = 0; i < MOTOR_NUM; i++)
+		if (rcv == 0)
 		{
-			level[i] = 0;
-			pwr[i] = 0;
+			for(i = 0; i < MOTOR_NUM; i++)
+			{
+				level[i] = 0;
+				pwr[i] = 0;
+			}
 		}
 		#endif
 		PS2_offset = 0;
@@ -113,10 +116,10 @@ void main()
 		else
 		{
 		//PSコントローラから信号を受信できなかった時の処理
-			if(rcv_err>=RCV_THRESHOLD)
+			if(rcv_err >= RCV_THRESHOLD)
 			{
 			//再試行回数が閾値を超えた場合通信断絶と判断する
-				rcv=0;
+				rcv = 0;
 			}
 			//再試行回数のカウント
 			else rcv_err++;
