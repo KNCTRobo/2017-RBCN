@@ -2,6 +2,7 @@
  */
 #ifndef _ANALOGS_DEFINED_
 #define _ANALOGS_DEFINED_
+#if ANALOG_ENABLE != 0
 
 #ifndef ANALOG_THRESHOLD
 #define ANALOG_THRESHOLD 80
@@ -35,5 +36,15 @@ typedef struct {
 
 Analogs gen_Analog(unsigned char source[],int offset);
 
+#define PS2_STICK_RLE(data) ((data.sticks & 0x01) != 0)
+#define PS2_STICK_RRI(data) ((data.sticks & 0x02) != 0)
+#define PS2_STICK_RUP(data) ((data.sticks & 0x04) != 0)
+#define PS2_STICK_RDN(data) ((data.sticks & 0x08) != 0)
+#define PS2_STICK_LLE(data) ((data.sticks & 0x10) != 0)
+#define PS2_STICK_LRI(data) ((data.sticks & 0x20) != 0)
+#define PS2_STICK_LUP(data) ((data.sticks & 0x40) != 0)
+#define PS2_STICK_LDN(data) ((data.sticks & 0x80) != 0)
+
+#endif
 #endif
 /* analogs.h EOF */
