@@ -81,8 +81,24 @@
 #elif Program == 2
 /* ロボット2"" 設定項目 */
 	#define MOTOR_NUM	6
-	#define MOTOR_MOVER	'R'
-	#define MOTOR_MOVEL	'L'
+	/*	MOTOR_MOVEA
+	 *	メカナム左前
+	 */	#define MOTOR_MOVEA	'A'
+	/*	MOTOR_MOVEB
+	 *	メカナム右前
+	 */	#define MOTOR_MOVEB	'B'
+	/*	MOTOR_MOVEC
+	 *	メカナム左後
+	 */	#define MOTOR_MOVEC	'C'
+	/*	MOTOR_MOVED
+	 *	メカナム右後
+	 */	#define MOTOR_MOVED	'D'
+	/*	MOTOR_AIR
+	 *	エアー
+	 */	#define MOTOR_AIR	'E'
+	/*	MOTOR_ARM
+	 *	竿
+	 */	#define MOTOR_ARM	'F'
 	/*	LOOP_DELAY
 	 *	プログラムループの待ち時間
 	 */	#define LOOP_DELAY	0
