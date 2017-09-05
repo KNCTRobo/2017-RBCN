@@ -28,67 +28,100 @@
  *	コンパイル制御による制御プログラムの選択
  */	#define Program	1
 
-#if Program == 0
-#define PWR_MOV_TABLE	{0}
-#endif
+/* 共通設定項目 */
+	/*	F_TIME
+	 *	LED試験点灯のLED点灯時間
+	 */	#define F_TIME	200
+	/*	LED_PULLUP
+	 *	LED1のプルアップ使用フラグ
+	 */	#define LED_PULLUP			   1
+	/*	LED_OPR
+	 *	オペレーションLEDのピン設定
+	 */	#define LED_OPR				PIN_A0
+	/*	LED_F1
+	 *	LED1のピン設定
+	 */	#define LED_F1				PIN_A2
+	/*	EMITRULE_LED_F1
+	 *	LED1の点灯条件
+	 */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_buf)
 #if Program == 1
-#define MOTOR_NUM	5
-#define MOTOR_MOVER 'R'
-#define MOTOR_MOVEL 'L'
-#define MOTOR_AIRa 'A'
-#define MOTOR_AIRb 'B'
-#define MOTOR_ARM 'C'
-/*	PWR_MOV_TABLE
- *	移動に用いるパワー
- */	#define PWR_MOV_TABLE	{-100, -30, 0, 30, 100}
-/*	PWR_AIR
- *	エアシリンダ駆動に用いるパワー
- */	#define PWR_AIR	100
-/*	PWR_ARM
- *	アーム駆動に用いるパワー
- */	#define PWR_ARM	100
+/* ロボット1"鶴(サロルン)" 設定項目 */
+	#define MOTOR_NUM	5
+	#define MOTOR_MOVER 'R'
+	#define MOTOR_MOVEL 'L'
+	#define MOTOR_AIRa 'A'
+	#define MOTOR_AIRb 'B'
+	#define MOTOR_ARM 'C'
+	/*	PWR_MOV_TABLE
+	 *	移動に用いるパワー
+	 */	#define PWR_MOV_TABLE	{-100, -30, 0, 30, 100}
+	/*	PWR_AIR
+	 *	エアシリンダ駆動に用いるパワー
+	 */	#define PWR_AIR	100
+	/*	PWR_ARM
+	 *	アーム駆動に用いるパワー
+	 */	#define PWR_ARM	100
+	/*	LOOP_DELAY
+	 *	プログラムループの待ち時間
+	 */	#define LOOP_DELAY	0
+	/*	LOOP_DELAYUNIT_US
+	 *	プログラムループの待ち時間の単位をusにするかどうか
+	 */	#define LOOP_DELAYUNIT_US	1
+	/*	TIME_MOTOR_MARGIN
+	 *	モータードライバに信号を送信した直後の待ち時間
+	 */	#define TIME_MOTOR_MARGIN	0
+	/*	DATA_BUFFER_SIZE
+	 *	受信データのバッファサイズ
+	 */	#define PS2_DATA_BUFFER_SIZE		  32
+	/*	RCV_THRESHOLD
+	 *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
+	 */	#define RCV_THRESHOLD		   3
+	#define ANALOG_ENABLE	0
+	#define ANALOG_THRESHOLD	80
+#elif Program == 2
+/* ロボット2"" 設定項目 */
+	#define MOTOR_NUM	6
+	#define MOTOR_MOVER	'R'
+	#define MOTOR_MOVEL	'L'
+	/*	LOOP_DELAY
+	 *	プログラムループの待ち時間
+	 */	#define LOOP_DELAY	0
+	/*	LOOP_DELAYUNIT_US
+	 *	プログラムループの待ち時間の単位をusにするかどうか
+	 */	#define LOOP_DELAYUNIT_US	1
+	/*	TIME_MOTOR_MARGIN
+	 *	モータードライバに信号を送信した直後の待ち時間
+	 */	#define TIME_MOTOR_MARGIN	0
+	/*	DATA_BUFFER_SIZE
+	 *	受信データのバッファサイズ
+	 */	#define PS2_DATA_BUFFER_SIZE		  32
+	/*	RCV_THRESHOLD
+	 *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
+	 */	#define RCV_THRESHOLD		   3
+	#define ANALOG_ENABLE	0
+	#define ANALOG_THRESHOLD	80
+#else
+/* デフォルト値 */
+	#define PWR_MOV_TABLE	{0}
+	/*	LOOP_DELAY
+	 *	プログラムループの待ち時間
+	 */	#define LOOP_DELAY	0
+	/*	LOOP_DELAYUNIT_US
+	 *	プログラムループの待ち時間の単位をusにするかどうか
+	 */	#define LOOP_DELAYUNIT_US	1
+	/*	TIME_MOTOR_MARGIN
+	 *	モータードライバに信号を送信した直後の待ち時間
+	 */	#define TIME_MOTOR_MARGIN	0
+	/*	DATA_BUFFER_SIZE
+	 *	受信データのバッファサイズ
+	 */	#define PS2_DATA_BUFFER_SIZE		  32
+	/*	RCV_THRESHOLD
+	 *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
+	 */	#define RCV_THRESHOLD		   3
+	#define ANALOG_ENABLE	0
+	#define ANALOG_THRESHOLD	80
+
 #endif
-#if Program == 2
-#define MOTOR_NUM	6
-#define MOTOR_MOVER	'R'
-#define MOTOR_MOVEL	'L'
-#endif
-
-/*	LOOP_DELAY
- *	プログラムループの待ち時間
- */	#define LOOP_DELAY	0
-/*	LOOP_DELAYUNIT_US
- *	プログラムループの待ち時間の単位をusにするかどうか
- */	#define LOOP_DELAYUNIT_US	1
-/*	TIME_MOTOR_MARGIN
- *	モータードライバに信号を送信した直後の待ち時間
- */	#define TIME_MOTOR_MARGIN	0
-/*	F_TIME
- *	LED試験点灯のLED点灯時間
- */	#define F_TIME	200
-
-/*	DATA_BUFFER_SIZE
- *	受信データのバッファサイズ
- */	#define PS2_DATA_BUFFER_SIZE		  32
-/*	RCV_THRESHOLD
- *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
- */	#define RCV_THRESHOLD		   3
-
-#define ANALOG_ENABLE	0
-#define ANALOG_THRESHOLD	80
-
-/*	LED_PULLUP
- *	LED1のプルアップ使用フラグ
- */	#define LED_PULLUP			   1
-/*	LED_OPR
- *	オペレーションLEDのピン設定
- */	#define LED_OPR				PIN_A0
-/*	LED_F1
- *	LED1のピン設定
- */	#define LED_F1				PIN_A2
-/*	EMITRULE_LED_F1
- *	LED1の点灯条件
- */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_buf)
 
 #endif
 /* defines.h EOF */
