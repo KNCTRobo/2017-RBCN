@@ -46,12 +46,24 @@
 	 */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_buf)
 #if Program == 1
 /* ロボット1"鶴(サロルン)" 設定項目 */
-	#define MOTOR_NUM	5
-	#define MOTOR_MOVER 'R'
-	#define MOTOR_MOVEL 'L'
-	#define MOTOR_AIRa 'A'
-	#define MOTOR_AIRb 'B'
-	#define MOTOR_ARM 'C'
+	/*	MOTOR_NUM
+	 *	使用モーター数
+	 */	#define MOTOR_NUM	5
+	/*	MOTOR_MOVER
+	 *	タイヤ右
+	 */	#define MOTOR_MOVER 'R'
+	/*	MOTOR_MOVEL
+	 *	タイヤ左
+	 */	#define MOTOR_MOVEL 'L'
+	/*	MOTOR_AIRa
+	 *	エアー1
+	 */	#define MOTOR_AIRa 'A'
+	/*	MOTOR_AIRb
+	 *	エアー2
+	 */	#define MOTOR_AIRb 'B'
+	/*	MOTOR_ARM
+	 *	竿
+	 */	#define MOTOR_ARM 'C'
 	/*	PWR_MOV_TABLE
 	 *	移動に用いるパワー
 	 */	#define PWR_MOV_TABLE	{-100, -30, 0, 30, 100}
@@ -79,7 +91,7 @@
 	#define ANALOG_ENABLE	0
 	#define ANALOG_THRESHOLD	80
 #elif Program == 2
-/* ロボット2"" 設定項目 */
+/* ロボット2"スマリン" 設定項目 */
 	#define MOTOR_NUM	6
 	/*	MOTOR_MOVEA
 	 *	メカナム左前
@@ -99,6 +111,15 @@
 	/*	MOTOR_ARM
 	 *	竿
 	 */	#define MOTOR_ARM	'F'
+	/*	PWR_MOV_TABLE
+	 *	移動に用いるパワー
+	 */	#define PWR_MOV_TABLE	{-100, -30, 0, 30, 100}
+	/*	PWR_AIR
+	 *	エアシリンダ駆動に用いるパワー
+	 */	#define PWR_AIR	100
+	/*	PWR_ARM
+	 *	アーム駆動に用いるパワー
+	 */	#define PWR_ARM	100
 	/*	LOOP_DELAY
 	 *	プログラムループの待ち時間
 	 */	#define LOOP_DELAY	0
