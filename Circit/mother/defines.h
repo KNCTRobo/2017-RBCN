@@ -128,7 +128,7 @@
 	 */	#define LOOP_DELAYUNIT_US	1
 	/*	TIME_MOTOR_MARGIN
 	 *	モータードライバに信号を送信した直後の待ち時間
-	 */	#define TIME_MOTOR_MARGIN	0
+	 */	#define TIME_MOTOR_MARGIN	2000
 	/*	DATA_BUFFER_SIZE
 	 *	受信データのバッファサイズ
 	 */	#define PS2_DATA_BUFFER_SIZE		  32
