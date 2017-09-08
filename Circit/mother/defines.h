@@ -26,7 +26,7 @@
 
 /*	Program
  *	コンパイル制御による制御プログラムの選択
- */	#define Program	1
+ */	#define Program	2
 
 /* 共通設定項目 */
 	/*	F_TIME
@@ -135,7 +135,7 @@
 	/*	RCV_THRESHOLD
 	 *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
 	 */	#define RCV_THRESHOLD		   3
-	#define ANALOG_ENABLE	0
+	#define ANALOG_ENABLE	1
 	#define ANALOG_THRESHOLD	80
 #else
 /* デフォルト値 */
