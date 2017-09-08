@@ -138,6 +138,20 @@ void main()
 					level[2] = (PS2_PUSH_L1 ? 2 : 1);
 					level[3] -= (PS2_PUSH_L1 ? 2 : 1);
 				}
+				if (PS2_PUSH_LE)
+				{
+					level[0] -= (PS2_PUSH_L1 ? 2 : 1);
+					level[1] = (PS2_PUSH_L1 ? 2 : 1);
+					level[2] -= (PS2_PUSH_L1 ? 2 : 1);
+					level[3] = (PS2_PUSH_L1 ? 2 : 1);
+				}
+				if (PS2_PUSH_RI)
+				{
+					level[0] = (PS2_PUSH_L1 ? 2 : 1);
+					level[1] -= (PS2_PUSH_L1 ? 2 : 1);
+					level[2] = (PS2_PUSH_L1 ? 2 : 1);
+					level[3] -= (PS2_PUSH_L1 ? 2 : 1);
+				}
 				pwr[4] = PS2_PUSH_R2 ? PWR_AIR : 0;
 				pwr[5] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
 				#endif
