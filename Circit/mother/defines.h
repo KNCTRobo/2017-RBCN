@@ -120,6 +120,18 @@
 	/*	PWR_ARM
 	 *	アーム駆動に用いるパワー
 	 */	#define PWR_ARM	100
+	/*	PWR_MOVEA_INVERT
+	 *	駆動モータA符号反転フラグ
+	 */	#define PWR_MOVEA_INVERT 0
+	/*	PWR_MOVEB_INVERT
+	 *	駆動モータA符号反転フラグ
+	 */	#define PWR_MOVEB_INVERT 0
+	/*	PWR_MOVEC_INVERT
+	 *	駆動モータA符号反転フラグ
+	 */	#define PWR_MOVEC_INVERT 0
+	/*	PWR_MOVED_INVERT
+	 *	駆動モータA符号反転フラグ
+	 */	#define PWR_MOVED_INVERT 1
 	/*	LOOP_DELAY
 	 *	プログラムループの待ち時間
 	 */	#define LOOP_DELAY	0

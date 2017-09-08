@@ -189,6 +189,10 @@ void main()
 		pwr[1] = pwt[2 + level[1]];
 		pwr[2] = pwt[2 + level[2]];
 		pwr[3] = pwt[2 + level[3]];
+		if (PWR_MOVEA_INVERT) pwr[0] = -pwr[0];
+		if (PWR_MOVEB_INVERT) pwr[1] = -pwr[1];
+		if (PWR_MOVEC_INVERT) pwr[2] = -pwr[2];
+		if (PWR_MOVED_INVERT) pwr[3] = -pwr[3];
 		#endif
 	/* LED点灯制御 */
 		if(f[0])
