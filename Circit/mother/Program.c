@@ -1,6 +1,6 @@
 /*	Program.c
  *	高専ロボコン2017 Aチームプログラム
- *	ver. 0.98
+ *	ver. 1.00
  */
 
 #include "includes.h"
@@ -11,6 +11,14 @@ void setup(void);
 void motor_emit(char channnel, int power);
 void motor_reset(void);
 void PS2_read(void);
+/*	Data_Proc(int*)
+ *	データ処理
+ */	void Data_Proc(signed int* stat);
+/*	Set_pwr(int*, int*, int)
+ *	モータードライバ出力レベル決定
+ */	void Set_pwr(signed int* stat, signed int* power);
+void motor_senddata(int* power, int* buffer, int index);
+int motor_isemit(int* power);
 void led_reset(void);
 void led_flash(void);
 void led_on(char pin);
@@ -20,10 +28,18 @@ void led_off(char pin);
 /*	uchar PS2_Data[PS2_DATA_BUFFER_SIZE]
  *	PSコントローラからのデータを格納するバッファ
  */	unsigned char PS2_Data[PS2_DATA_BUFFER_SIZE];
+#if ANALOG_ENABLE != 0
+/*	Analogs stick
+ *	PSコントローラのアナログスティック情報
+ */	Analogs Stick;
+#endif
 /*	int PS2_offset
  *コントローラのオフセット
  */	int PS2_offset = 0;
 const int pwt[] = PWR_MOV_TABLE;
+/*	int rcv
+ *	コントローラの受信状態
+ */	int rcv = 0;
 
 void main()
 {
@@ -33,26 +49,25 @@ void main()
 	 */	int i;
 	/*	int* f
 	 *	Frame変数
-	 */	int f[1];
-	/*	int rcv
-	 *	コントローラの受信状態
-	 */	int rcv = 0;
+	 */	int f[2];
 	#if Program != 0
 	signed int level[MOTOR_NUM];
 	/*	int* pwr
 	 *	モータ出力レベル
 	 */	signed int pwr[MOTOR_NUM];
+	/*	int* motor_buf
+	 *	モータ出力レベル
+	 */	signed int motor_buf[MOTOR_NUM];
 	#endif
+	#if 0
 	/*	uchar motor_buf
 	 *	モータ出力状態バッファ
 	 */	unsigned char motor_buf = 0;
+	#endif
 	/*	long rcv_err
 	 *	PSコントローラからの通信が途絶えたときに通信断絶状態と判定するための変数
 	 *	閾値はRCV_THRESHOLDとする
 	 */	long int rcv_err = RCV_THRESHOLD;
-	#if ANALOG_ENABLE != 0
-	Analogs Stick;						/* PSコントローラのアナログスティック情報 */
-	#endif
 	/* 初期化 */
 	RESET:								/* ソフトリセット */
 	setup();							/* セットアップ */
@@ -75,8 +90,8 @@ void main()
 			}
 		}
 		#endif
-		PS2_offset = 0;
 		f[0]++;	if (f[0] >= 2) f[0] = 0;
+		f[1]++;	if (f[1] >= MOTOR_NUM) f[1] = 0;
 		/* PSコントローラからデータ受信 */
 		PS2_read();
 		/* PSコントローラのデータ処理 */
@@ -87,87 +102,11 @@ void main()
 			rcv_err=0;
 			rcv = 1;
 			if(PS2_Data[2 + PS2_offset]&1) goto RESET;/* SELECTキーが押されたらソフトリセット */
-			/* データ処理 */
 			#if ANALOG_ENABLE != 0
 			Stick = gen_Analog(PS2_Data, PS2_offset);
 			#endif
-			if (PS2_PUSH_R1)
-			{
-				/* ロボット1(釣り竿展開用ロボ) */
-				#if (Program == 1)
-				level[0] = (PS2_PUSH_UP ? (PS2_PUSH_L1 ? 2 : 1) : 0) - (PS2_PUSH_DN ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				level[1] = (PS2_PUSH_UP ? (PS2_PUSH_L1 ? 2 : 1) : 0) - (PS2_PUSH_DN ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				if (PS2_PUSH_LE)
-				{
-					level[0] += (PS2_PUSH_L1 ? 2 : 1);
-					level[1] -= (PS2_PUSH_L1 ? 2 : 1);
-				}
-				if (PS2_PUSH_RI)
-				{
-					level[0] -= (PS2_PUSH_L1 ? 2 : 1);
-					level[1] += (PS2_PUSH_L1 ? 2 : 1);
-				}
-				level[0] = level[0]>2 ? 2 : level[0];
-				level[1] = level[1]>2 ? 2 : level[1];
-				level[0] = level[0]<-2 ? -2 : level[0];
-				level[1] = level[1]<-2 ? -2 : level[1];
-				pwr[2] = PS2_PUSH_L2 ? PWR_AIR : 0;
-				pwr[3] = PS2_PUSH_R2 ? PWR_AIR : 0;
-				pwr[4] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
-				/* ロボット2(風船割ロボ) */
-				#elif (Program == 2)
-				level[0]
-					= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
-					- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				level[1]
-					= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
-					- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				level[2]
-					= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
-					- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				level[3]
-					= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
-					- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
-				if (PS2_STICK_LRI(Stick))
-				{
-					level[0] += (PS2_PUSH_L1 ? 2 : 1);
-					level[1] -= (PS2_PUSH_L1 ? 2 : 1);
-					level[2] -= (PS2_PUSH_L1 ? 2 : 1);
-					level[3] += (PS2_PUSH_L1 ? 2 : 1);
-				}
-				if (PS2_STICK_LLE(Stick))
-				{
-					level[0] -= (PS2_PUSH_L1 ? 2 : 1);
-					level[1] += (PS2_PUSH_L1 ? 2 : 1);
-					level[2] += (PS2_PUSH_L1 ? 2 : 1);
-					level[3] -= (PS2_PUSH_L1 ? 2 : 1);
-				}
-				if (PS2_PUSH_LE)
-				{
-					level[0] = -(PS2_PUSH_L1 ? 2 : 1);
-					level[1] = (PS2_PUSH_L1 ? 2 : 1);
-					level[2] = -(PS2_PUSH_L1 ? 2 : 1);
-					level[3] = (PS2_PUSH_L1 ? 2 : 1);
-				}
-				if (PS2_PUSH_RI)
-				{
-					level[0] = (PS2_PUSH_L1 ? 2 : 1);
-					level[1] = -(PS2_PUSH_L1 ? 2 : 1);
-					level[2] = (PS2_PUSH_L1 ? 2 : 1);
-					level[3] = -(PS2_PUSH_L1 ? 2 : 1);
-				}
-				level[0] = level[0]>2 ? 2 : level[0];
-				level[1] = level[1]>2 ? 2 : level[1];
-				level[2] = level[2]>2 ? 2 : level[2];
-				level[3] = level[3]>2 ? 2 : level[3];
-				level[0] = level[0]<-2 ? -2 : level[0];
-				level[1] = level[1]<-2 ? -2 : level[1];
-				level[2] = level[2]<-2 ? -2 : level[2];
-				level[3] = level[3]<-2 ? -2 : level[3];
-				pwr[4] = PS2_PUSH_R2 ? PWR_AIR : 0;
-				pwr[5] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
-				#endif
-			}
+			Data_Proc(level);
+			Set_pwr(level, pwr);
 		}
 		else
 		{
@@ -180,21 +119,7 @@ void main()
 			//再試行回数のカウント
 			else rcv_err++;
 		}
-	/* 入力内容からデータを処理 */
-		#if Program == 1
-		pwr[0] = pwt[2 + level[0]];
-		pwr[1] = pwt[2 + level[1]];
-		#elif Program == 2
-		pwr[0] = pwt[2 + level[0]];
-		pwr[1] = pwt[2 + level[1]];
-		pwr[2] = pwt[2 + level[2]];
-		pwr[3] = pwt[2 + level[3]];
-		if (PWR_MOVEA_INVERT) pwr[0] = -pwr[0];
-		if (PWR_MOVEB_INVERT) pwr[1] = -pwr[1];
-		if (PWR_MOVEC_INVERT) pwr[2] = -pwr[2];
-		if (PWR_MOVED_INVERT) pwr[3] = -pwr[3];
-		#endif
-	/* LED点灯制御 */
+		/* LED点灯制御 */
 		if(f[0])
 			led_on(LED_OPR);
 		else
@@ -203,76 +128,9 @@ void main()
 			led_on(LED_F1);
 		else
 			led_off(LED_F1);
-	/* モータードライバの出力内容を決定、信号を出力する */
-		if (rcv && PS2_PUSH_R1)
-		{
-			#if Program == 1
-			if (pwr[0] || pwr[1] || (motor_buf&0x01))
-			{
-				motor_emit(MOTOR_MOVEL, pwr[0]);
-				motor_emit(MOTOR_MOVER, pwr[1]);
-				motor_buf = motor_buf & (!0x01);
-				motor_buf = motor_buf | ((pwr[0] || pwr[1]) ? 0x01 : 0x00);
-			}
-			if (pwr[2] || (motor_buf&0x02))
-			{
-				motor_emit(MOTOR_AIRa, pwr[2]);
-				motor_buf = motor_buf & (!0x02);
-				motor_buf = motor_buf | ((pwr[2]) ? 0x02 : 0x00);
-			}
-			if (pwr[3] || (motor_buf&0x04))
-			{
-				motor_emit(MOTOR_AIRb, pwr[3]);
-				motor_buf = motor_buf & (!0x04);
-				motor_buf = motor_buf | ((pwr[3]) ? 0x04 : 0x00);
-			}
-			if (pwr[4] || (motor_buf&0x08))
-			{
-				motor_emit(MOTOR_ARM, pwr[4]);
-				motor_buf = motor_buf & (!0x08);
-				motor_buf = motor_buf | ((pwr[4]) ? 0x08 : 0x00);
-			}
-			#elif Program == 2
-			if (pwr[0] || pwr[1] || pwr[2] || pwr[3] || (motor_buf&0x01))
-			{
-				motor_emit(MOTOR_MOVEA, pwr[0]);
-				motor_emit(MOTOR_MOVEB, pwr[1]);
-				motor_emit(MOTOR_MOVEC, pwr[2]);
-				motor_emit(MOTOR_MOVED, pwr[3]);
-				motor_buf = motor_buf & (!0x01);
-				motor_buf = motor_buf | ((pwr[0] || pwr[1] || pwr[2] || pwr[3]) ? 0x01 : 0x00);
-			}
-			if (pwr[4] || (motor_buf&0x02))
-			{
-				motor_emit(MOTOR_AIR, pwr[4]);
-				motor_buf = motor_buf & (!0x02);
-				motor_buf = motor_buf | ((pwr[4]) ? 0x02 : 0x00);
-			}
-			if (pwr[5] || (motor_buf&0x04))
-			{
-				motor_emit(MOTOR_ARM, pwr[5]);
-				motor_buf = motor_buf & (!0x04);
-				motor_buf = motor_buf | ((pwr[5]) ? 0x04 : 0x00);
-			}
-			#endif
-		}
-		else
-		{
-			#if Program == 1
-			motor_emit(MOTOR_MOVEL, 0);
-			motor_emit(MOTOR_MOVER, 0);
-			motor_emit(MOTOR_AIRa, 0);
-			motor_emit(MOTOR_AIRb, 0);
-			motor_emit(MOTOR_ARM, 0);
-			#elif Program == 2
-			motor_emit(MOTOR_MOVEA, 0);
-			motor_emit(MOTOR_MOVEB, 0);
-			motor_emit(MOTOR_MOVEC, 0);
-			motor_emit(MOTOR_MOVED, 0);
-			motor_emit(MOTOR_AIR, 0);
-			motor_emit(MOTOR_ARM, 0);
-			#endif
-		}
+		/* モータードライバの出力内容を決定、信号を出力する */
+		motor_senddata(pwr, motor_buf, f[1]);
+
 		#if LOOP_DELAYUNIT_US
 		delay_us(LOOP_DELAY);
 		#else
@@ -317,6 +175,7 @@ void PS2_read()
 	int i;
 	for(i = 0; i < PS2_DATA_BUFFER_SIZE; i++)
 		PS2_Data[i]=0;
+	PS2_offset = 0;
 	gets(PS2_Data);
 	for (i = 0; i < PS2_DATA_BUFFER_SIZE - 1; i++)
 	{
@@ -327,6 +186,223 @@ void PS2_read()
 			break;
 		}
 	}
+}
+
+void Data_Proc(signed int* stat)
+/* ロボット1(釣り竿展開用ロボ) */
+#if (Program == 1)
+{
+	if (PS2_PUSH_R1)
+	{
+		stat[0] = (PS2_PUSH_UP ? (PS2_PUSH_L1 ? 2 : 1) : 0) - (PS2_PUSH_DN ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		stat[1] = (PS2_PUSH_UP ? (PS2_PUSH_L1 ? 2 : 1) : 0) - (PS2_PUSH_DN ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		if (PS2_PUSH_LE)
+		{
+			stat[0] += (PS2_PUSH_L1 ? 2 : 1);
+			stat[1] -= (PS2_PUSH_L1 ? 2 : 1);
+		}
+		if (PS2_PUSH_RI)
+		{
+			stat[0] -= (PS2_PUSH_L1 ? 2 : 1);
+			stat[1] += (PS2_PUSH_L1 ? 2 : 1);
+		}
+		stat[0] = stat[0] > 2 ? 2 : stat[0];
+		stat[1] = stat[1] > 2 ? 2 : stat[1];
+		stat[0] = stat[0] < -2 ? -2 : stat[0];
+		stat[1] = stat[1] < -2 ? -2 : stat[1];
+	}
+}
+/* ロボット2(風船割ロボ) */
+#elif (Program == 2)
+{
+	if (PS2_PUSH_R1)
+	{
+		stat[0]
+			= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
+			- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		stat[1]
+			= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
+			- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		stat[2]
+			= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
+			- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		stat[3]
+			= (PS2_STICK_LUP(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0)
+			- (PS2_STICK_LDN(Stick) ? (PS2_PUSH_L1 ? 2 : 1) : 0);
+		if (PS2_STICK_LRI(Stick))
+		{
+			stat[0] += (PS2_PUSH_L1 ? 2 : 1);
+			stat[1] -= (PS2_PUSH_L1 ? 2 : 1);
+			stat[2] -= (PS2_PUSH_L1 ? 2 : 1);
+			stat[3] += (PS2_PUSH_L1 ? 2 : 1);
+		}
+		if (PS2_STICK_LLE(Stick))
+		{
+			stat[0] -= (PS2_PUSH_L1 ? 2 : 1);
+			stat[1] += (PS2_PUSH_L1 ? 2 : 1);
+			stat[2] += (PS2_PUSH_L1 ? 2 : 1);
+			stat[3] -= (PS2_PUSH_L1 ? 2 : 1);
+		}
+		if (PS2_PUSH_LE)
+		{
+			stat[0] = -(PS2_PUSH_L1 ? 2 : 1);
+			stat[1] = (PS2_PUSH_L1 ? 2 : 1);
+			stat[2] = -(PS2_PUSH_L1 ? 2 : 1);
+			stat[3] = (PS2_PUSH_L1 ? 2 : 1);
+		}
+		if (PS2_PUSH_RI)
+		{
+			stat[0] = (PS2_PUSH_L1 ? 2 : 1);
+			stat[1] = -(PS2_PUSH_L1 ? 2 : 1);
+			stat[2] = (PS2_PUSH_L1 ? 2 : 1);
+			stat[3] = -(PS2_PUSH_L1 ? 2 : 1);
+		}
+		stat[0] = stat[0]>2 ? 2 : stat[0];
+		stat[1] = stat[1]>2 ? 2 : stat[1];
+		stat[2] = stat[2]>2 ? 2 : stat[2];
+		stat[3] = stat[3]>2 ? 2 : stat[3];
+		stat[0] = stat[0]<-2 ? -2 : stat[0];
+		stat[1] = stat[1]<-2 ? -2 : stat[1];
+		stat[2] = stat[2]<-2 ? -2 : stat[2];
+		stat[3] = stat[3]<-2 ? -2 : stat[3];
+	}
+}
+#endif
+
+void Set_pwr(signed int* stat, signed int* power)
+/* ロボット1(釣り竿展開用ロボ) */
+#if (Program == 1)
+{
+	power[0] = pwt[2 + stat[0]];
+	power[1] = pwt[2 + stat[1]];
+	power[2] = PS2_PUSH_L2 ? PWR_AIR : 0;
+	power[3] = PS2_PUSH_R2 ? PWR_AIR : 0;
+	power[4] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
+}
+/* ロボット2(風船割ロボ) */
+#elif (Program == 2)
+{
+	power[0] = pwt[2 + stat[0]];
+	power[1] = pwt[2 + stat[1]];
+	power[2] = pwt[2 + stat[2]];
+	power[3] = pwt[2 + stat[3]];
+	power[4] = PS2_PUSH_R2 ? PWR_AIR : 0;
+	power[5] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
+	if (PWR_MOVEA_INVERT) power[0] = -power[0];
+	if (PWR_MOVEB_INVERT) power[1] = -power[1];
+	if (PWR_MOVEC_INVERT) power[2] = -power[2];
+	if (PWR_MOVED_INVERT) power[3] = -power[3];
+}
+#endif
+
+void motor_senddata(int* power, int* buffer, int index)
+/* ロボット1(釣り竿展開用ロボ) */
+#if Program == 1
+{
+	if (rcv && PS2_PUSH_R1)
+	{
+		if (power[0] != buffer[0] || index == 0)
+		{
+			motor_emit(MOTOR_MOVEL, power[0]);
+			buffer[0] = power[0];
+		}
+		if (power[0] != buffer[1] || index == 1)
+		{
+			motor_emit(MOTOR_MOVER, power[1]);
+			buffer[1] = power[1];
+		}
+		if (power[2] != buffer[2] || index == 2)
+		{
+			motor_emit(MOTOR_AIRa, power[2]);
+			buffer[2] = power[2];
+		}
+		if (power[3] != buffer[3] || index == 3)
+		{
+			motor_emit(MOTOR_AIRb, power[3]);
+			buffer[3] = power[3];
+		}
+		if (power[4] != buffer[4] || index == 4)
+		{
+			motor_emit(MOTOR_ARM, power[4]);
+			buffer[4] = power[4];
+		}
+	}
+	else
+	{
+		motor_emit(MOTOR_MOVEL, 0);
+		motor_emit(MOTOR_MOVER, 0);
+		motor_emit(MOTOR_AIRa, 0);
+		motor_emit(MOTOR_AIRb, 0);
+		motor_emit(MOTOR_ARM, 0);
+		buffer[0] = power[0];
+		buffer[1] = power[1];
+		buffer[2] = power[2];
+		buffer[3] = power[3];
+		buffer[4] = power[4];
+	}
+}
+/* ロボット2(風船割ロボ) */
+#elif Program == 2
+{
+	if (rcv && PS2_PUSH_R1)
+	{
+		if (power[0] != buffer[0] || index == 0)
+		{
+			motor_emit(MOTOR_MOVEA, power[0]);
+			buffer[0] = power[0];
+		}
+		if (power[1] != buffer[1] || index == 1)
+		{
+			motor_emit(MOTOR_MOVEB, power[1]);
+			buffer[1] = power[1];
+		}
+		if (power[2] != buffer[2] || index == 2)
+		{
+			motor_emit(MOTOR_MOVEC, power[2]);
+			buffer[2] = power[2];
+		}
+		if (power[3] != buffer[3] || index == 3)
+		{
+			motor_emit(MOTOR_MOVED, power[3]);
+			buffer[3] = power[3];
+		}
+		if (power[4] != buffer[4] || index == 4)
+		{
+			motor_emit(MOTOR_AIR, power[4]);
+			buffer[4] = power[4];
+		}
+		if (power[5] != buffer[5] || index == 5)
+		{
+			motor_emit(MOTOR_ARM, power[5]);
+			buffer[5] = power[5];
+		}
+	}
+	else
+	{
+		motor_emit(MOTOR_MOVEA, 0);
+		motor_emit(MOTOR_MOVEB, 0);
+		motor_emit(MOTOR_MOVEC, 0);
+		motor_emit(MOTOR_MOVED, 0);
+		motor_emit(MOTOR_AIR, 0);
+		motor_emit(MOTOR_ARM, 0);
+		buffer[0] = power[0];
+		buffer[1] = power[1];
+		buffer[2] = power[2];
+		buffer[3] = power[3];
+		buffer[4] = power[4];
+		buffer[5] = power[5];
+	}
+}
+#endif
+
+int motor_isemit(int* power)
+{
+	int i, y = 0;
+	for (i = 0; i < MOTOR_NUM; i++)
+	{
+		y |= power[i];
+	}
+	return y;
 }
 
 void led_reset(void)

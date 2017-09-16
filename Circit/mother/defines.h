@@ -6,7 +6,7 @@
 
 #include <16F886.h>
 
-#fuses INTRC_IO,NOWDT,NOPROTECT,PUT,NOMCLR,NOLVP,BROWNOUT
+#fuses INTRC_IO,WDT,NOPROTECT,PUT,NOMCLR,NOLVP,BROWNOUT
 #use delay(CLOCK=8000000)
 #use fast_io(a)//先に宣言する。
 #use fast_io(b)
@@ -26,7 +26,7 @@
 
 /*	Program
  *	コンパイル制御による制御プログラムの選択
- */	#define Program	2
+ */	#define Program	1
 
 /* 共通設定項目 */
 	/*	F_TIME
@@ -43,7 +43,7 @@
 	 */	#define LED_F1				PIN_A2
 	/*	EMITRULE_LED_F1
 	 *	LED1の点灯条件
-	 */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_buf)
+	 */	#define EMITRULE_LED_F1		((rcv && !PS2_PUSH_R1) || motor_isemit(pwr))
 #if Program == 1
 /* ロボット1"鶴(サロルン)" 設定項目 */
 	/*	MOTOR_NUM
@@ -81,13 +81,13 @@
 	 */	#define LOOP_DELAYUNIT_US	1
 	/*	TIME_MOTOR_MARGIN
 	 *	モータードライバに信号を送信した直後の待ち時間
-	 */	#define TIME_MOTOR_MARGIN	0
+	 */	#define TIME_MOTOR_MARGIN	450
 	/*	DATA_BUFFER_SIZE
 	 *	受信データのバッファサイズ
 	 */	#define PS2_DATA_BUFFER_SIZE		  32
 	/*	RCV_THRESHOLD
 	 *	PS2の信号が途絶えた際に通信断絶状態と判定するための閾値
-	 */	#define RCV_THRESHOLD		   3
+	 */	#define RCV_THRESHOLD		10
 	#define ANALOG_ENABLE	0
 	#define ANALOG_THRESHOLD	80
 #elif Program == 2
