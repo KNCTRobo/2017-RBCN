@@ -1,6 +1,6 @@
 /*	Program.c
  *	高専ロボコン2017 Aチームプログラム
- *	ver. 1.00
+ *	ver. 1.01
  */
 
 #include "includes.h"
@@ -286,7 +286,7 @@ void Set_pwr(signed int* stat, signed int* power)
 	power[1] = pwt[2 + stat[1]];
 	power[2] = pwt[2 + stat[2]];
 	power[3] = pwt[2 + stat[3]];
-	power[4] = PS2_PUSH_R2 ? PWR_AIR : 0;
+	power[4] = PS2_PUSH_TRI ? PWR_AIR : 0;
 	power[5] = (PS2_PUSH_CIR ? PWR_ARM : 0) - (PS2_PUSH_SQU ? PWR_ARM : 0);
 	if (PWR_MOVEA_INVERT) power[0] = -power[0];
 	if (PWR_MOVEB_INVERT) power[1] = -power[1];

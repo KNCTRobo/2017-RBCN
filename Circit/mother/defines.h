@@ -26,7 +26,7 @@
 
 /*	Program
  *	コンパイル制御による制御プログラムの選択
- */	#define Program	1
+ */	#define Program	0
 
 /* 共通設定項目 */
 	/*	F_TIME
