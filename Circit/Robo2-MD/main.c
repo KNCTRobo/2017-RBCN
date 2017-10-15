@@ -47,19 +47,22 @@
 /* LED_PIN
  * LEDのピンの位置 */
  #define LED_PIN PIN_A4
-#if MOTOR_TYPE == 1
-#define MOTOR_HEAD_A 'A'
-#define MOTOR_HEAD_B 'B'
-#elif MOTOR_TYPE == 2
-#define MOTOR_HEAD_A 'C'
-#define MOTOR_HEAD_B 'D'
-#elif MOTOR_TYPE == 3
-#define MOTOR_HEAD_A 'E'
-#define MOTOR_HEAD_B 'F'
-#elif MOTOR_TYPE == 4
-#define MOTOR_HEAD_A 'L'
-#define MOTOR_HEAD_B 'R'
-#endif
+/* MOTOR_HEAD
+ * モータードライバ制御信号の設定
+ * 詳細はdefines.hに記載 */
+ #if MOTOR_TYPE == 1
+ #define MOTOR_HEAD_A 'A'
+ #define MOTOR_HEAD_B 'B'
+ #elif MOTOR_TYPE == 2
+ #define MOTOR_HEAD_A 'C'
+ #define MOTOR_HEAD_B 'D'
+ #elif MOTOR_TYPE == 3
+ #define MOTOR_HEAD_A 'E'
+ #define MOTOR_HEAD_B 'F'
+ #elif MOTOR_TYPE == 4
+ #define MOTOR_HEAD_A 'L'
+ #define MOTOR_HEAD_B 'R'
+ #endif
 
 /* グローバル変数 */
 /*	uchar cnt
@@ -102,7 +105,7 @@ void main()
 	enable_interrupts(INT_RTCC);					//タイマー0の割り込み許可
 	enable_interrupts(INT_TIMER1);
 	enable_interrupts(GLOBAL);
-	/* 高専ロボコン2017 朱雀モータ使用時に無限ループを脱出問題が発生
+	/* 高専ロボコン2017 朱雀モータ使用時に無限ループを脱出する問題が発生
 	 * 対策のためデータ読み出し(無限ループ)部分をサブルーチン化、二重で無限ループをかけることで回避
 	 * @福澤 */
 	for (;;)

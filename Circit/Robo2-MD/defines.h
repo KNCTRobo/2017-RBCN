@@ -19,7 +19,7 @@
  #define LED_FLASH_DIV 3
 /* LED_PATTERN
  * LED点灯パターン
- * 指定できる値は0...4です
+ * 指定できる値は0...4
  * 通常は0を指定してください */
  #define LED_PATTERN 1
 /* BUFFER_SIZE
